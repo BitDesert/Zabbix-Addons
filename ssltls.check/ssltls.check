@@ -141,7 +141,9 @@ OPENSSL_PROTOS="smtp pop3 imap ftp xmpp" # which protocols are suppored by opens
 # check if we connect to a native SSL/TLS service or use STARTTLS
 if [ "$TLS_TYPE" == "native" ]; then
   # "native" SSL/TLS service, no STARTTLS command needed
-  STARTTLS=""
+  # but a servername is added for SNI support
+  SERVERNAME=$(echo $HOST | awk -F: '{print $1}')
+  STARTTLS="-servername $SERVERNAME"
 else
   # custom protocol supplied, check if protocol is supported and build the OpenSSL starttls command
   for PROTO in $OPENSSL_PROTOS; do
